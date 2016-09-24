@@ -3,12 +3,14 @@ import requests
 import json
 import re
 
-offset = 4
+offset = 336
 
 # On the first version I'm going to pharse the most direct and influential skills
 # since they seem to be a combination of the rest and i'm interested in a quick solution
 
 for i in range(343):
+	if i+offset > 344:
+		break
 	page = requests.get('http://www.futhead.com/15/career-mode/players/all/all/all/all/all/all/all/all/all/rating/cards/?page='+str(i+offset))
 	tree = html.fromstring(page.content)
 	xpath_link_players = "//*[contains(concat(' ', @class, ' '), ' player-page-listing ')]/div//a/@href"
