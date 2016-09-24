@@ -3,11 +3,13 @@ import requests
 import json
 import re
 
+offset = 4
+
 # On the first version I'm going to pharse the most direct and influential skills
 # since they seem to be a combination of the rest and i'm interested in a quick solution
 
 for i in range(343):
-	page = requests.get('http://www.futhead.com/15/career-mode/players/all/all/all/all/all/all/all/all/all/rating/cards/?page='+str(i+1))
+	page = requests.get('http://www.futhead.com/15/career-mode/players/all/all/all/all/all/all/all/all/all/rating/cards/?page='+str(i+offset))
 	tree = html.fromstring(page.content)
 	xpath_link_players = "//*[contains(concat(' ', @class, ' '), ' player-page-listing ')]/div//a/@href"
 	list_link_players = tree.xpath(xpath_link_players)
@@ -23,11 +25,16 @@ for i in range(343):
 			"phy"  : re.findall('[0-9]*',tree.xpath("//*[contains(concat(' ', @class, ' '), ' playercard-attr playercard-attr6 ')]/text()")[0])[0]
 		}
 		
+		try:
+			club = re.search('data-club="([0-9]+)"',page.content).group(1)
+		except:
+			club = -1
+		
 		player_data = {
 			"id" 		: str.split(player_link,'/')[4],
 			"name"	: str.split(player_link,'/')[5],
 			"rating": re.search('data-player-rating="([0-9]+)"',page.content).group(1),
-			"club"	: re.search('data-club="([0-9]+)"',page.content).group(1),
+			"club"	: club,
 			"nation": re.search('data-nation="([0-9]+)"',page.content).group(1),
 			"heigh"	: re.search('<tr><td>Height</td><td>([0-9]+)cm',page.content).group(1),
 			"age"		: re.search('<tr><td>Age</td><td>([0-9]+)',page.content).group(1),
@@ -43,6 +50,6 @@ for i in range(343):
 		
 		with open('players-data/'+str.split(player_link,'/')[4]+'.json', 'w') as outfile:
 			json.dump(player_data, outfile)
-	print i
+	print i+offset
 	
 print "done!!!"
