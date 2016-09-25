@@ -3,13 +3,13 @@ import requests
 import json
 import re
 
-offset = 336
+offset = 0
 
 # On the first version I'm going to pharse the most direct and influential skills
 # since they seem to be a combination of the rest and i'm interested in a quick solution
 
 for i in range(343):
-	if i+offset > 344:
+	if i+offset > 350: #higher number does not make it break
 		break
 	page = requests.get('http://www.futhead.com/15/career-mode/players/all/all/all/all/all/all/all/all/all/rating/cards/?page='+str(i+offset))
 	tree = html.fromstring(page.content)
@@ -28,7 +28,7 @@ for i in range(343):
 		}
 		
 		try:
-			club = re.search('data-club="([0-9]+)"',page.content).group(1)
+			club = re.search('<a href="/15/career-mode/clubs/(.*)/">',page.content).group(1)
 		except:
 			club = -1
 		
@@ -49,6 +49,7 @@ for i in range(343):
 			"Defensive-Workrate"	: re.search('<tr><td>Defensive Workrate</td><td>([a-zA-Z]+)',page.content).group(1)
 
 		}
+		
 		
 		with open('players-data/'+str.split(player_link,'/')[4]+'.json', 'w') as outfile:
 			json.dump(player_data, outfile)
