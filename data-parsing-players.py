@@ -3,12 +3,12 @@ import requests
 import json
 import re
 
-offset = 0
+offset = 342
 
 # On the first version I'm going to pharse the most direct and influential skills
 # since they seem to be a combination of the rest and i'm interested in a quick solution
 
-for i in range(343):
+for i in range(355):
 	if i+offset > 350: #higher number does not make it break
 		break
 	page = requests.get('http://www.futhead.com/15/career-mode/players/all/all/all/all/all/all/all/all/all/rating/cards/?page='+str(i+offset))
