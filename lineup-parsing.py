@@ -1,3 +1,4 @@
+from lxml import html
 import requests
 import json
 import re
@@ -10,3 +11,8 @@ matches = re.findall('<td align=center width=50 ><a  href="/match/([0-9]+)/"',pa
 
 for match in matches:
 	page = requests.get('http://www.football-lineups.com/match/'+str(match)+'/' , headers=headers)
+	
+	#needs to be changed
+	tree = html.fromstring(page.content)
+	xpath_link_players = "//*[contains(concat(' ', @class, ' '), ' player-page-listing ')]/div//a/@href"
+	list_link_players = tree.xpath(xpath_link_players)
