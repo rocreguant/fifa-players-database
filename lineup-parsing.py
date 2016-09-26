@@ -9,10 +9,43 @@ page = requests.get('http://www.football-lineups.com/tourn/La_Liga_2015-2016/fix
 
 matches = re.findall('<td align=center width=50 ><a  href="/match/([0-9]+)/"',page.content)
 
+i = 0
 for match in matches:
+	i+=1
+	print i, "out of 380"
+	
 	page = requests.get('http://www.football-lineups.com/match/'+str(match)+'/' , headers=headers)
 	
-	#needs to be changed
-	tree = html.fromstring(page.content)
-	xpath_link_players = "//*[contains(concat(' ', @class, ' '), ' player-page-listing ')]/div//a/@href"
-	list_link_players = tree.xpath(xpath_link_players)
+	#if there is no vote might crash
+	
+	#getting the table
+	table = re.findall('(cellspacing=0 cellpadding=0 width=280 bgcolor=#f0f0f0><tr><td width=45% valign=top><center><b>)([\S ]+)voted',page.content)
+	
+	output = {}
+	
+	#splitting by teams
+	teams = table[0][1].split('<center><b>')
+	for team in teams:
+		players_out = []
+		
+		#getting the players
+		players = re.findall('<font color=tag[0-9A-Z]+>([\S]+) *([\S]*)<\/font><\/td><td>', team.replace('#','tag'))
+		
+		#Selecting the name or surname which is longer
+		for player in players :
+			if len(player[0]) > len(player[1]):
+				players_out.append(player[0])
+			else:
+				players_out.append(player[1])
+				
+		#saving the players of the match in a json var
+		output[re.findall('([\S]+)<\/b>', team)[0]] = players_out
+		
+	
+	#saving the match
+	with open('lineup-data/'+str(match)+'.json', 'w') as outfile:
+			json.dump(output, outfile)
+	
+print "done!!"	
+	
+	
