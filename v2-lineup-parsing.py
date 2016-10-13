@@ -4,6 +4,8 @@ import re
 from time import gmtime, strftime
 import unicodedata
 
+#idea info: http://www.gregreda.com/2015/02/15/web-scraping-finding-the-api/
+
 #i don't think this is working properly
 #for some reason changes all special characters to A
 def remove_accents(s):
