@@ -5,7 +5,7 @@ from time import gmtime, strftime
 import unicodedata
 
 
-offset = 46
+offset = 354
 
 
 #idea info: http://www.gregreda.com/2015/02/15/web-scraping-finding-the-api/
@@ -74,7 +74,7 @@ def get_lineup(match):
 			continue
 		#get name
 		
-		name = re.findall('title=\"([a-zA-Z0-9\s,\-.]+)\"',p)[0]
+		name = re.findall('title=\"([a-zA-Z0-9\s,\-.\(\)]+)\"',p)[0]
 		position = re.findall('class=\"([a-zA-Z]{4})\"',p)[0]
 		player = {"name":name, "position":position}
 		c +=1
