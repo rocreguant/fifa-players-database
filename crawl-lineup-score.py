@@ -34,11 +34,33 @@ for match in matches:
 	match_name = re.findall('([\-a-z]+)[0-9]',match)[0][:-1]
 	print match #manchester-united-v-watford-02-march-2016-317118
 	
-	page = requests.get('http://www.11v11.com/matches/'+march , headers=headers)
-	#get score
-	#compute difference of score
-	#get starting lineup
+	page = requests.get('http://www.11v11.com/matches/'+match , headers=headers)
+
+	#get teams
+	teams = [str.replace(match_name.split('-v-')[0],'-',' '), str.replace(match_name.split('-v-')[1],'-',' ')]
 	
+	#get score
+	result = re.findall("<span class=\"score\">([0-9]+)<\/span>", page.content)
+	
+	#score difference
+	sc_diff = str(int(result[1]) - int(result[0]))
+	
+	#get starting lineup
+	tree = html.fromstring(page.content)
+	xpath_link_players = "//div[contains(@class, 'lineup')]/div[contains(@class, 'home')]/div/a/text()"
+	home_team = tree.xpath(xpath_link_players)[0:11]
+	xpath_link_players = "//div[contains(@class, 'lineup')]/div[contains(@class, 'away')]/div/a/text()"
+	away_team = tree.xpath(xpath_link_players)[0:11]
+	
+	row = teams+ result + [sc_diff] + home_team + away_team
+	save = '\t'.join(row)
+	
+	with open('result-lineup/'+match_name+'.json', 'w') as outfile:
+			json.dump(save, outfile)
+	
+	print '\n'
+
+print 'done'	
 	
 	
 	
